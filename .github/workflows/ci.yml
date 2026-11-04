@@ -1,0 +1,64 @@
+# Intégration continue : moteur Rust + CLI, puis dashboard.
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  rust:
+    name: Rust (fmt, clippy, tests, CLI)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+
+      - uses: Swatinem/rust-cache@v2
+
+      - name: Format
+        run: cargo fmt --all --check
+
+      - name: Clippy
+        run: cargo clippy --all-targets -- -D warnings
+
+      - name: Tests rapides
+        run: cargo test
+
+      - name: Simulation rapide
+        run: cargo run --release -p cli -- configs/quick.toml
+
+      - name: Vérification des sorties du CLI
+        run: |
+          set -euo pipefail
+          for name in metrics equity_curves tc_distribution drawdowns drawdown_histogram; do
+            test -s "target/quick/data/${name}.parquet"
+            test -s "target/quick/json/${name}.json"
+          done
+          for name in configs baseline systems meta; do
+            test -s "target/quick/json/${name}.json"
+          done
+          # Chaque JSON doit être valide et la table metrics non vide (6 systèmes × 3 configs)
+          for f in target/quick/json/*.json; do jq empty "$f"; done
+          test "$(jq length target/quick/json/metrics.json)" -eq 18
+
+  dashboard:
+    name: Dashboard (tests, build)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: dashboard
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: dashboard/package-lock.json
+
+      - run: npm ci
+      - run: npm test
+      - run: npm run build
