@@ -4,4 +4,8 @@
 //! expose des structures de résultats sérialisables.
 
 pub mod cards;
+pub mod counters;
+pub mod game;
 pub mod hand;
+pub mod rules;
+pub mod strategy;

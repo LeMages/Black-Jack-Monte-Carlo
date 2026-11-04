@@ -173,6 +173,29 @@ impl Shoe {
         self.cards.len()
     }
 
+    /// Place des cartes choisies en tête du sabot (exemples et tests).
+    ///
+    /// Les cartes sont échangées avec des exemplaires du même rang plus loin dans
+    /// le sabot, donc la composition reste exacte.
+    ///
+    /// # Arguments
+    ///
+    /// * `top` - Cartes à distribuer en premier, dans l'ordre.
+    ///
+    /// # Panics
+    ///
+    /// Si une carte demandée n'est plus disponible dans le sabot.
+    pub fn stack_top(&mut self, top: &[u8]) {
+        for (offset, &card) in top.iter().enumerate() {
+            let pos = self.next + offset;
+            let found = self.cards[pos..]
+                .iter()
+                .position(|&c| c == card)
+                .unwrap_or_else(|| panic!("carte {card} indisponible pour empiler le sabot"));
+            self.cards.swap(pos, pos + found);
+        }
+    }
+
     fn refill_counts(&mut self) {
         self.remaining_by_rank = [0; 11];
         for rank in 1..=10u8 {
