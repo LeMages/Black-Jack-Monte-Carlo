@@ -1,8 +1,19 @@
 [package]
 name = "cli"
+description = "CLI batch : configuration TOML → simulations → Parquet + JSON"
 version.workspace = true
 edition.workspace = true
 license.workspace = true
 
+[[bin]]
+name = "cli"
+path = "src/main.rs"
+
 [dependencies]
+anyhow = "1"
+arrow = { version = "60", default-features = false }
 engine = { path = "../engine" }
+parquet = { version = "60", default-features = false, features = ["arrow", "snap"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = { version = "1", features = ["preserve_order"] }
+toml = "0.9"

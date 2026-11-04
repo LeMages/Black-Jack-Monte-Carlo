@@ -1,0 +1,1 @@
+{"system":"basic","config_id":"baseline","bet_model":"flat","deviations":"none","advantage_pct":-0.355117,"ev_per_100":-0.355117,"std_per_hand":1.1407749920302561,"n0":null,"risk_of_ruin":1.0,"kelly_fraction":0.0,"avg_bet":1.0,"win_rate":0.4240573675,"n_hands_simulated":2000000000}

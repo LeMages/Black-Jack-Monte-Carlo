@@ -23,9 +23,10 @@ fn level_two_ramp_is_rescaled_to_hi_lo() {
 #[test]
 fn ko_ramp_starts_at_pivot() {
     let ramp = UnitRamp::new(&KO, 15.0, 1.0);
-    assert_eq!(ramp.units(3.0), 1.0);
-    assert_eq!(ramp.units(4.0), 2.0);
-    assert_eq!(ramp.units(7.0), 5.0);
+    assert_eq!(ramp.units(4.0), 1.0);
+    assert_eq!(ramp.units(6.0), 2.0);
+    assert_eq!(ramp.units(9.5), 5.0);
+    assert_eq!(ramp.units(30.0), 15.0);
     assert_eq!(ramp.units(-20.0), 1.0);
 }
 
@@ -83,6 +84,10 @@ fn kelly_uses_edge_table_and_caps() {
 #[test]
 fn ruin_freezes_and_drawdown_tracks_peak() {
     let mut state = BankrollState::new(100.0);
+    let mut broke = BankrollState::new(5.0);
+    broke.settle(-8.0, 1.0);
+    assert_eq!(broke.bankroll, 0.0);
+    assert!(broke.ruined);
     state.settle(100.0, 1.0);
     state.settle(-50.0, 1.0);
     assert!((state.max_drawdown - 0.25).abs() < 1e-12);

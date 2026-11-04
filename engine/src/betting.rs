@@ -38,8 +38,9 @@ pub fn tc_bin(count: f64) -> i32 {
 ///
 /// Systèmes équilibrés : `bet = clamp(1, spread_max, floor(bc / échelle − ramp_offset))`,
 /// où l'échelle ramène le compte du système sur l'échelle Hi-Lo afin que tous les
-/// systèmes suivent la même rampe. KO : `bet = clamp(1, spread_max,
-/// floor(rc − pivot) + 2)`, la mise monte dès que le running count atteint le pivot.
+/// systèmes suivent la même rampe. KO : la rampe démarre au pivot, qui remplace
+/// `ramp_offset` : `bet = clamp(1, spread_max, floor(rc − pivot))`, sans division
+/// par les jeux restants.
 ///
 /// Attributs principaux :
 /// * `spread_max` - mise maximale en unités ;
@@ -100,7 +101,7 @@ impl UnitRamp {
     /// La mise dans `[1, spread_max]`.
     pub fn units(&self, betting_count: f64) -> f64 {
         let raw = match self.ko_pivot {
-            Some(pivot) => (betting_count - pivot).floor() + 2.0,
+            Some(pivot) => (betting_count - pivot).floor(),
             None => (betting_count / self.scale - self.ramp_offset).floor(),
         };
         raw.clamp(1.0, self.spread_max)
@@ -406,7 +407,9 @@ impl BankrollState {
     /// * `min_bet` - Mise minimale : en dessous, le run est déclaré ruiné.
     pub fn settle(&mut self, net: f64, min_bet: f64) {
         debug_assert!(!self.ruined, "résultat appliqué à un run ruiné");
-        self.bankroll += net;
+        // Plancher à 0 : sans fonds, le joueur ne peut pas doubler ni splitter, il ne
+        // perd donc jamais plus que sa bankroll (approximation documentée)
+        self.bankroll = (self.bankroll + net).max(0.0);
         if self.bankroll > self.peak {
             self.peak = self.bankroll;
         }

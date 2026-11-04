@@ -20,7 +20,7 @@ use crate::counters::CountSystem;
 use crate::strategy::{BasicStrategy, DecisionContext, PlayerAction, PlayingStrategy};
 
 /// Niveau de déviations activé.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub enum DeviationLevel {
     /// Basic strategy pure.

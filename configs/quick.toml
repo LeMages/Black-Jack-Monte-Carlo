@@ -1,0 +1,59 @@
+# Simulation rapide (CI et développement) : quelques secondes.
+# Les sorties vont dans target/ pour ne jamais écraser les données publiées.
+
+master_seed = 20261104
+n_threads = 4
+n_runs = 32
+n_hands_per_run = 20000
+equity_sample_interval = 1000
+ace_factor = 2.0
+ror_bankroll_units = 1000
+tc_min_frequency = 0.0005
+kelly_min_hands = 2000
+drawdown_bin_width = 5
+parquet_dir = "target/quick/data"
+json_dir = "target/quick/json"
+
+systems = ["hi-lo", "ko", "hi-opt-ii", "omega-ii", "wong-halves", "zen"]
+
+[rules]
+n_decks = 6
+penetration = 0.75
+dealer_hits_soft_17 = false
+blackjack_payout = 1.5
+double_after_split = true
+double_any_two = true
+max_splits = 3
+resplit_aces = false
+hit_split_aces = false
+late_surrender = true
+dealer_peeks = true
+
+[[configs]]
+id = "s15-i18f4"
+label = "6 jeux · S17 · spread 1-15 · I18+Fab4"
+spread = 15
+ramp_offset = 1
+deviations = "i18_fab4"
+penetration = 0.75
+bankroll_policy = { kind = "fractional_kelly", k = 0.5, max_bet = 15 }
+
+[[configs]]
+id = "s5-none"
+label = "6 jeux · S17 · spread 1-5 · sans déviation"
+spread = 5
+ramp_offset = 1
+deviations = "none"
+penetration = 0.75
+bankroll_policy = { kind = "fractional_kelly", k = 0.5, max_bet = 5 }
+
+[[configs]]
+id = "s15-flat10"
+label = "6 jeux · S17 · spread 1-15 · I18+Fab4 · bankroll 10 % plat"
+spread = 15
+ramp_offset = 1
+deviations = "i18_fab4"
+penetration = 0.75
+bankroll_policy = { kind = "flat_pct", pct = 0.10, max_bet = 1000 }
+bankroll_hands = 2000
+bankroll_sample_interval = 20
