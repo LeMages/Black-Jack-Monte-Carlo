@@ -5,6 +5,7 @@
 
 pub mod cards;
 pub mod counters;
+pub mod deviations;
 pub mod game;
 pub mod hand;
 pub mod rules;
