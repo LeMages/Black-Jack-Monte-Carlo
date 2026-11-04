@@ -10,17 +10,19 @@ interface ChartCardProps {
   subtitle?: string;
   /** Fichier de données dont provient le graphe. */
   source: string;
+  /** Hauteur de la zone de tracé en pixels (défaut : celle du CSS, 260 px). */
+  height?: number;
   children: ReactNode;
 }
 
-export default function ChartCard({ title, subtitle, source, children }: ChartCardProps) {
+export default function ChartCard({ title, subtitle, source, height, children }: ChartCardProps) {
   return (
     <figure className="card chart-card">
       <figcaption>
         <h3 className="chart-card__title">{title}</h3>
         {subtitle && <p className="chart-card__subtitle">{subtitle}</p>}
       </figcaption>
-      <div className="chart-card__plot">{children}</div>
+      <div className="chart-card__plot" style={height ? { height } : undefined}>{children}</div>
       <p className="chart-card__source">Source : {source}</p>
     </figure>
   );
