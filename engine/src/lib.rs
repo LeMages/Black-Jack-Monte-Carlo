@@ -3,6 +3,7 @@
 //! La bibliothèque ne connaît ni le CLI ni le dashboard : elle simule, agrège et
 //! expose des structures de résultats sérialisables.
 
+pub mod betting;
 pub mod cards;
 pub mod counters;
 pub mod deviations;
